@@ -11,10 +11,11 @@
 <body>
     <div class="container">
         <div class="tabs">
-            <button class="tab-button active" data-tab="slot-machine">Slot Machine</button>
-            <button class="tab-button" data-tab="daily">Daily</button>
+            <button class="tab-button active" data-tab="slot-machine">Play</button>
+            <button class="tab-button" data-tab="daily">Bonus</button>
             <button class="tab-button" data-tab="level">Level</button>
-            <button class="tab-button" data-tab="settings">Settings</button>
+            <button class="tab-button" data-tab="achievements">Erfolge</button>
+            <button class="tab-button" data-tab="settings">Backup</button>
         </div>
 
         <!-- XP Bar -->
@@ -227,21 +228,172 @@
                         </div>
                     </div>
 
-                    <div class="level-rewards">
-                        <h3>🎁 Level Belohnungen</h3>
-                        <div class="rewards-list" id="rewards-list">
-                            <div class="reward-item">
-                                <span class="reward-level">Level 5:</span>
-                                <span class="reward-text">+ 50€ Bonus</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="achievements" class="tab-content">
+            <div class="achievements-panel">
+                <div class="achievements-list">
+                    <div id="achievements-container">
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🎯</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Erster Gewinn</div>
+                                <div class="achievement-description">Gewinnen Sie Ihren ersten Euro</div>
+                                <div class="achievement-reward">Belohnung: +10€</div>
                             </div>
-                            <div class="reward-item">
-                                <span class="reward-level">Level 10:</span>
-                                <span class="reward-text">+ 100€ Bonus</span>
+                            <div class="achievement-status" id="achievement-first-win">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">💰</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Großer Gewinner</div>
+                                <div class="achievement-description">Gewinnen Sie 1000€ insgesamt</div>
+                                <div class="achievement-reward">Belohnung: +100€</div>
                             </div>
-                            <div class="reward-item">
-                                <span class="reward-level">Level 20:</span>
-                                <span class="reward-text">+ 250€ Bonus</span>
+                            <div class="achievement-status" id="achievement-big-winner">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🎰</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Spieler</div>
+                                <div class="achievement-description">Spielen Sie 100 Spins</div>
+                                <div class="achievement-reward">Belohnung: +50€</div>
                             </div>
+                            <div class="achievement-status" id="achievement-player">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">⭐</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Sternenjäger</div>
+                                <div class="achievement-description">Gewinnen Sie mit 3x ⭐</div>
+                                <div class="achievement-reward">Belohnung: +200€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-star-hunter">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🏆</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Level 5 Belohnung</div>
+                                <div class="achievement-description">Erreichen Sie Level 5</div>
+                                <div class="achievement-reward">Belohnung: +50€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-level-5">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🏆</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Level 10 Belohnung</div>
+                                <div class="achievement-description">Erreichen Sie Level 10</div>
+                                <div class="achievement-reward">Belohnung: +100€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-level-10">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🏆</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Level 20 Belohnung</div>
+                                <div class="achievement-description">Erreichen Sie Level 20</div>
+                                <div class="achievement-reward">Belohnung: +250€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-level-20">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🎲</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Glückspilz</div>
+                                <div class="achievement-description">Gewinnen Sie 5x hintereinander</div>
+                                <div class="achievement-reward">Belohnung: +75€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-lucky-streak">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">💎</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Diamantensammler</div>
+                                <div class="achievement-description">Gewinnen Sie 5000€ insgesamt</div>
+                                <div class="achievement-reward">Belohnung: +300€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-diamond-collector">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🔥</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Heißer Draht</div>
+                                <div class="achievement-description">Gewinnen Sie mit 3x 🔔</div>
+                                <div class="achievement-reward">Belohnung: +150€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-hot-wire">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🍇</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Traubenkönig</div>
+                                <div class="achievement-description">Gewinnen Sie mit 3x 🍇</div>
+                                <div class="achievement-reward">Belohnung: +80€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-grape-king">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🎯</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Präzisionsschütze</div>
+                                <div class="achievement-description">Gewinnen Sie mit 3x 🍒</div>
+                                <div class="achievement-reward">Belohnung: +60€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-precision-shooter">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">⚡</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Blitzschnell</div>
+                                <div class="achievement-description">Spielen Sie 500 Spins</div>
+                                <div class="achievement-reward">Belohnung: +150€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-lightning-fast">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">👑</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">König der Automaten</div>
+                                <div class="achievement-description">Erreichen Sie Level 50</div>
+                                <div class="achievement-reward">Belohnung: +1000€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-slot-king">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🎪</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Zirkusdirektor</div>
+                                <div class="achievement-description">Gewinnen Sie mit allen Symbolen</div>
+                                <div class="achievement-reward">Belohnung: +500€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-circus-director">🔒</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">💸</div>
+                            <div class="achievement-info">
+                                <div class="achievement-title">Geldmaschine</div>
+                                <div class="achievement-description">Gewinnen Sie 10000€ insgesamt</div>
+                                <div class="achievement-reward">Belohnung: +750€</div>
+                            </div>
+                            <div class="achievement-status" id="achievement-money-machine">🔒</div>
                         </div>
                     </div>
                 </div>
@@ -250,13 +402,13 @@
 
         <div id="settings" class="tab-content">
             <div class="settings-panel">
-                <h2>⚙️ Settings</h2>
                 <div class="backup-section">
                     <h3>Backup & Restore</h3>
                     <p>Speichern Sie Ihre Spielstände und stellen Sie sie wieder her.</p>
                     <div class="backup-controls">
-                        <button id="download-backup" class="backup-button">📥 Download Backup</button>
-                        <button id="upload-backup" class="backup-button">📤 Upload Backup</button>
+                        <button id="download-backup" class="backup-button">Download Game</button>
+                        <button id="upload-backup" class="backup-button">Upload Game</button>
+                        <button id="reset-game" class="reset-button">Reset Game</button>
                         <input type="file" id="backup-file" accept=".json" style="display: none;">
                     </div>
                     <div class="storage-info">

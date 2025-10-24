@@ -12,6 +12,30 @@ class SlotMachine {
         this.lastHourlyBonusClaim = null;
         this.bonusHistory = [];
         
+        // Achievements System
+        this.achievements = {
+            'first-win': { unlocked: false, reward: 10 },
+            'big-winner': { unlocked: false, reward: 100 },
+            'player': { unlocked: false, reward: 50 },
+            'star-hunter': { unlocked: false, reward: 200 },
+            'level-5': { unlocked: false, reward: 50 },
+            'level-10': { unlocked: false, reward: 100 },
+            'level-20': { unlocked: false, reward: 250 },
+            'lucky-streak': { unlocked: false, reward: 75 },
+            'diamond-collector': { unlocked: false, reward: 300 },
+            'hot-wire': { unlocked: false, reward: 150 },
+            'grape-king': { unlocked: false, reward: 80 },
+            'precision-shooter': { unlocked: false, reward: 60 },
+            'lightning-fast': { unlocked: false, reward: 150 },
+            'slot-king': { unlocked: false, reward: 1000 },
+            'circus-director': { unlocked: false, reward: 500 },
+            'money-machine': { unlocked: false, reward: 750 }
+        };
+        
+        // Achievement tracking variables
+        this.consecutiveWins = 0;
+        this.wonSymbols = new Set();
+        
         // Level System
         this.playerLevel = 1;
         this.totalXP = 0;
@@ -40,6 +64,7 @@ class SlotMachine {
         this.initializeHourlyBonus();
         this.initializeLevelSystem();
         this.initializeSettings();
+        this.initializeAchievements();
     }
     
     initializeElements() {
@@ -143,6 +168,8 @@ class SlotMachine {
         this.downloadBackupBtn.addEventListener('click', () => this.downloadBackup());
         this.uploadBackupBtn.addEventListener('click', () => this.backupFileInput.click());
         this.backupFileInput.addEventListener('change', (e) => this.uploadBackup(e));
+        this.resetGameBtn = document.getElementById('reset-game');
+        this.resetGameBtn.addEventListener('click', () => this.resetGame());
         
         // Balance and account click events
         document.querySelector('.balance-info').addEventListener('click', () => this.openTransferPopup('withdraw'));
@@ -295,8 +322,17 @@ class SlotMachine {
             this.totalWins += winAmount;
             this.addXP(winAmount, 'win'); // 1 XP pro gewonnenem Euro
             this.showWinMessage(winAmount);
+            
+            // Track consecutive wins
+            this.consecutiveWins++;
+            
+            // Check achievements after a win
+            this.checkAchievements();
+            this.checkStarHunterAchievement(symbols);
         } else {
             this.lastWin = 0;
+            // Reset consecutive wins on loss
+            this.consecutiveWins = 0;
         }
     }
     
@@ -528,6 +564,9 @@ class SlotMachine {
             totalXP: this.totalXP,
             totalSpins: this.totalSpins,
             wonXP: this.wonXP,
+            achievements: this.achievements,
+            consecutiveWins: this.consecutiveWins,
+            wonSymbols: Array.from(this.wonSymbols),
             timestamp: Date.now()
         };
         localStorage.setItem('slotMachineData', JSON.stringify(gameData));
@@ -550,6 +589,9 @@ class SlotMachine {
             this.totalXP = gameData.totalXP !== undefined ? gameData.totalXP : 0;
             this.totalSpins = gameData.totalSpins !== undefined ? gameData.totalSpins : 0;
             this.wonXP = gameData.wonXP !== undefined ? gameData.wonXP : 0;
+            this.achievements = gameData.achievements || this.achievements;
+            this.consecutiveWins = gameData.consecutiveWins || 0;
+            this.wonSymbols = new Set(gameData.wonSymbols || []);
             } catch (e) {
                 console.log('Error loading saved data:', e);
             }
@@ -606,16 +648,24 @@ class SlotMachine {
     }
     
     checkLevelRewards() {
-        const rewards = {
-            5: 50,
-            10: 100,
-            20: 250
-        };
+        // Level rewards are now handled as achievements
+        this.checkLevelAchievements();
+    }
+    
+    checkLevelAchievements() {
+        // Level 5 Achievement
+        if (!this.achievements['level-5'].unlocked && this.playerLevel >= 5) {
+            this.unlockAchievement('level-5');
+        }
         
-        if (rewards[this.playerLevel]) {
-            this.accountBalance += rewards[this.playerLevel];
-            this.showNotification(`🎁 Level ${this.playerLevel} Belohnung: +€${rewards[this.playerLevel]}! 🎁`, 'success');
-            this.updateDisplay();
+        // Level 10 Achievement
+        if (!this.achievements['level-10'].unlocked && this.playerLevel >= 10) {
+            this.unlockAchievement('level-10');
+        }
+        
+        // Level 20 Achievement
+        if (!this.achievements['level-20'].unlocked && this.playerLevel >= 20) {
+            this.unlockAchievement('level-20');
         }
     }
     
@@ -842,9 +892,17 @@ class SlotMachine {
             totalWins: this.totalWins,
             lastWin: this.lastWin,
             lastBonusClaim: this.lastBonusClaim,
+            lastHourlyBonusClaim: this.lastHourlyBonusClaim,
             bonusHistory: this.bonusHistory,
+            playerLevel: this.playerLevel,
+            totalXP: this.totalXP,
+            totalSpins: this.totalSpins,
+            wonXP: this.wonXP,
+            achievements: this.achievements,
+            consecutiveWins: this.consecutiveWins,
+            wonSymbols: Array.from(this.wonSymbols),
             timestamp: Date.now(),
-            version: '1.0'
+            version: '2.0'
         };
         
         const dataStr = JSON.stringify(gameData, null, 2);
@@ -857,6 +915,8 @@ class SlotMachine {
         link.click();
         
         URL.revokeObjectURL(url);
+        
+        this.showNotification('Backup erfolgreich heruntergeladen!', 'success');
     }
     
     uploadBackup(event) {
@@ -870,28 +930,243 @@ class SlotMachine {
                 
                 // Validate backup data
                 if (backupData.version && backupData.balance !== undefined) {
+                    // Core game data
                     this.balance = backupData.balance;
                     this.accountBalance = backupData.accountBalance || 0;
                     this.betAmount = backupData.betAmount || 5;
                     this.totalWins = backupData.totalWins || 0;
                     this.lastWin = backupData.lastWin || 0;
+                    
+                    // Bonus system data
                     this.lastBonusClaim = backupData.lastBonusClaim || null;
+                    this.lastHourlyBonusClaim = backupData.lastHourlyBonusClaim || null;
                     this.bonusHistory = backupData.bonusHistory || [];
                     
+                    // Level system data
+                    this.playerLevel = backupData.playerLevel || 1;
+                    this.totalXP = backupData.totalXP || 0;
+                    this.totalSpins = backupData.totalSpins || 0;
+                    this.wonXP = backupData.wonXP || 0;
+                    
+                    // Achievements data
+                    this.achievements = backupData.achievements || this.achievements;
+                    this.consecutiveWins = backupData.consecutiveWins || 0;
+                    this.wonSymbols = new Set(backupData.wonSymbols || []);
+                    
+                    // Update all displays
                     this.updateDisplay();
                     this.updateBonusHistory();
+                    this.updateLevelDisplay();
+                    this.updateAchievementsDisplay();
                     this.updateStorageStatus();
                     this.saveToStorage();
                     
-                    alert('✅ Backup erfolgreich wiederhergestellt!');
+                    this.showNotification('✅ Backup erfolgreich wiederhergestellt!', 'success');
                 } else {
-                    alert('❌ Ungültige Backup-Datei!');
+                    this.showNotification('❌ Ungültige Backup-Datei!', 'error');
                 }
             } catch (error) {
-                alert('❌ Fehler beim Laden der Backup-Datei!');
+                this.showNotification('❌ Fehler beim Laden der Backup-Datei!', 'error');
             }
         };
         reader.readAsText(file);
+    }
+    
+    resetGame() {
+        // Show confirmation dialog
+        const confirmed = confirm(
+            '⚠️ WARNUNG: Dies wird ALLE Ihre Spielstände zurücksetzen!\n\n' +
+            '• Guthaben: 100€ (Standard)\n' +
+            '• Konto: 0€\n' +
+            '• Level: 1\n' +
+            '• Alle Erfolge: Gesperrt\n' +
+            '• Alle Statistiken: Zurückgesetzt\n\n' +
+            'Möchten Sie wirklich fortfahren?'
+        );
+        
+        if (confirmed) {
+            // Reset all game data to initial values
+            this.balance = 100;
+            this.accountBalance = 0;
+            this.betAmount = 5;
+            this.totalWins = 0;
+            this.lastWin = 0;
+            this.isSpinning = false;
+            this.autoSpinActive = false;
+            this.autoSpinInterval = null;
+            this.lastBonusClaim = null;
+            this.lastHourlyBonusClaim = null;
+            this.bonusHistory = [];
+            
+            // Reset level system
+            this.playerLevel = 1;
+            this.totalXP = 0;
+            this.currentLevelXP = 0;
+            this.totalSpins = 0;
+            this.wonXP = 0;
+            
+            // Reset achievements
+            this.achievements = {
+                'first-win': { unlocked: false, reward: 10 },
+                'big-winner': { unlocked: false, reward: 100 },
+                'player': { unlocked: false, reward: 50 },
+                'star-hunter': { unlocked: false, reward: 200 },
+                'level-5': { unlocked: false, reward: 50 },
+                'level-10': { unlocked: false, reward: 100 },
+                'level-20': { unlocked: false, reward: 250 },
+                'lucky-streak': { unlocked: false, reward: 75 },
+                'diamond-collector': { unlocked: false, reward: 300 },
+                'hot-wire': { unlocked: false, reward: 150 },
+                'grape-king': { unlocked: false, reward: 80 },
+                'precision-shooter': { unlocked: false, reward: 60 },
+                'lightning-fast': { unlocked: false, reward: 150 },
+                'slot-king': { unlocked: false, reward: 1000 },
+                'circus-director': { unlocked: false, reward: 500 },
+                'money-machine': { unlocked: false, reward: 750 }
+            };
+            
+            // Reset achievement tracking
+            this.consecutiveWins = 0;
+            this.wonSymbols = new Set();
+            
+            // Stop auto spin if active
+            if (this.autoSpinActive) {
+                this.stopAutoSpin();
+            }
+            
+            // Update all displays
+            this.updateDisplay();
+            this.updateBonusHistory();
+            this.updateLevelDisplay();
+            this.updateAchievementsDisplay();
+            this.updateStorageStatus();
+            this.saveToStorage();
+            
+            this.showNotification('🔄 Spiel erfolgreich zurückgesetzt!', 'success');
+        }
+    }
+    
+    // Achievements System
+    initializeAchievements() {
+        this.updateAchievementsDisplay();
+    }
+    
+    checkAchievements() {
+        // First Win Achievement
+        if (!this.achievements['first-win'].unlocked && this.totalWins > 0) {
+            this.unlockAchievement('first-win');
+        }
+        
+        // Big Winner Achievement
+        if (!this.achievements['big-winner'].unlocked && this.totalWins >= 1000) {
+            this.unlockAchievement('big-winner');
+        }
+        
+        // Player Achievement
+        if (!this.achievements['player'].unlocked && this.totalSpins >= 100) {
+            this.unlockAchievement('player');
+        }
+        
+        // Lucky Streak Achievement
+        if (!this.achievements['lucky-streak'].unlocked && this.consecutiveWins >= 5) {
+            this.unlockAchievement('lucky-streak');
+        }
+        
+        // Diamond Collector Achievement
+        if (!this.achievements['diamond-collector'].unlocked && this.totalWins >= 5000) {
+            this.unlockAchievement('diamond-collector');
+        }
+        
+        // Lightning Fast Achievement
+        if (!this.achievements['lightning-fast'].unlocked && this.totalSpins >= 500) {
+            this.unlockAchievement('lightning-fast');
+        }
+        
+        // Slot King Achievement
+        if (!this.achievements['slot-king'].unlocked && this.playerLevel >= 50) {
+            this.unlockAchievement('slot-king');
+        }
+        
+        // Money Machine Achievement
+        if (!this.achievements['money-machine'].unlocked && this.totalWins >= 10000) {
+            this.unlockAchievement('money-machine');
+        }
+        
+        // Circus Director Achievement
+        if (!this.achievements['circus-director'].unlocked && this.wonSymbols.size >= 6) {
+            this.unlockAchievement('circus-director');
+        }
+    }
+    
+    checkStarHunterAchievement(symbols) {
+        // Check for 3x same symbol achievements
+        if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) {
+            const symbol = symbols[0];
+            
+            // Add to won symbols set
+            this.wonSymbols.add(symbol);
+            
+            // Check specific symbol achievements
+            if (symbol === '⭐' && !this.achievements['star-hunter'].unlocked) {
+                this.unlockAchievement('star-hunter');
+            }
+            if (symbol === '🔔' && !this.achievements['hot-wire'].unlocked) {
+                this.unlockAchievement('hot-wire');
+            }
+            if (symbol === '🍇' && !this.achievements['grape-king'].unlocked) {
+                this.unlockAchievement('grape-king');
+            }
+            if (symbol === '🍒' && !this.achievements['precision-shooter'].unlocked) {
+                this.unlockAchievement('precision-shooter');
+            }
+        }
+    }
+    
+    unlockAchievement(achievementId) {
+        if (!this.achievements[achievementId].unlocked) {
+            this.achievements[achievementId].unlocked = true;
+            const reward = this.achievements[achievementId].reward;
+            this.accountBalance += reward;
+            
+            this.showNotification(`🏆 Erfolg freigeschaltet! +${reward}€ Bonus!`, 'success');
+            this.updateAchievementsDisplay();
+            this.updateDisplay();
+            this.saveToStorage();
+        }
+    }
+    
+    updateAchievementsDisplay() {
+        const achievementElements = {
+            'first-win': document.getElementById('achievement-first-win'),
+            'big-winner': document.getElementById('achievement-big-winner'),
+            'player': document.getElementById('achievement-player'),
+            'star-hunter': document.getElementById('achievement-star-hunter'),
+            'level-5': document.getElementById('achievement-level-5'),
+            'level-10': document.getElementById('achievement-level-10'),
+            'level-20': document.getElementById('achievement-level-20'),
+            'lucky-streak': document.getElementById('achievement-lucky-streak'),
+            'diamond-collector': document.getElementById('achievement-diamond-collector'),
+            'hot-wire': document.getElementById('achievement-hot-wire'),
+            'grape-king': document.getElementById('achievement-grape-king'),
+            'precision-shooter': document.getElementById('achievement-precision-shooter'),
+            'lightning-fast': document.getElementById('achievement-lightning-fast'),
+            'slot-king': document.getElementById('achievement-slot-king'),
+            'circus-director': document.getElementById('achievement-circus-director'),
+            'money-machine': document.getElementById('achievement-money-machine')
+        };
+        
+        Object.keys(this.achievements).forEach(achievementId => {
+            const element = achievementElements[achievementId];
+            if (element) {
+                if (this.achievements[achievementId].unlocked) {
+                    element.textContent = '✅';
+                    element.parentElement.classList.add('unlocked');
+                } else {
+                    element.textContent = '🔒';
+                    element.parentElement.classList.remove('unlocked');
+                }
+            }
+        });
     }
 }
 
