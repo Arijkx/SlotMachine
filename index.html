@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slot Machine - Glücksspiel Automat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" data-tab="slot-machine">Slot Machine</button>
+            <button class="tab-button" data-tab="daily">Daily</button>
+            <button class="tab-button" data-tab="level">Level</button>
+            <button class="tab-button" data-tab="settings">Settings</button>
+        </div>
+
+        <!-- XP Bar -->
+        <div class="xp-bar-container">
+            <div class="xp-bar-info">
+                <span class="player-level">Level <span id="player-level">1</span></span>
+                <span class="xp-text"><span id="current-xp">0</span> / <span id="next-level-xp">100</span> XP</span>
+            </div>
+            <div class="xp-bar">
+                <div class="xp-progress" id="xp-progress"></div>
+            </div>
+        </div>
+
+        <div id="slot-machine" class="tab-content active">
+            <main class="slot-machine">
+                    <div id="money-transfer-popup" class="money-transfer-popup hidden">
+                        <div class="popup-content">
+                            <div class="popup-header">
+                                <h3 id="popup-title">Geldtransfer</h3>
+                                <button id="close-popup" class="close-button">×</button>
+                            </div>
+                            <div class="popup-body">
+                                <div class="transfer-info">
+                                    <p id="transfer-description">Wählen Sie den Betrag für den Transfer:</p>
+                                </div>
+                                <div class="transfer-controls">
+                                    <label for="transfer-amount">Betrag:</label>
+                                    <input type="number" id="transfer-amount" min="1" max="1000" value="10">
+                                    <div class="quick-amounts">
+                                        <button class="quick-amount" data-amount="10">€10</button>
+                                        <button class="quick-amount" data-amount="50">€50</button>
+                                        <button class="quick-amount" data-amount="100">€100</button>
+                                        <button class="quick-amount" data-amount="500">€500</button>
+                                    </div>
+                                </div>
+                                <div class="transfer-balances">
+                                    <div class="balance-display">
+                                        <span id="available-balance-label">Verfügbares Guthaben: €</span>
+                                        <span id="available-balance">100</span>
+                                    </div>
+                                    <div class="balance-display">
+                                        <span id="account-balance-label">Kontostand: €</span>
+                                        <span id="account-balance-display">0</span>
+                                    </div>
+                                </div>
+                                <div class="transfer-actions">
+                                    <button id="confirm-transfer" class="confirm-button">Bestätigen</button>
+                                    <button id="cancel-transfer" class="cancel-button">Abbrechen</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+               
+
+                <div class="machine-body">
+                    <div class="reels-container">
+                        <div class="reel" id="reel1">
+                            <div class="symbol">🍒</div>
+                            <div class="symbol">🍋</div>
+                            <div class="symbol">🍊</div>
+                            <div class="symbol">🍇</div>
+                            <div class="symbol">🔔</div>
+                            <div class="symbol">⭐</div>
+                            <div class="symbol">🍒</div>
+                            <div class="symbol">🍋</div>
+                            <div class="symbol">🍊</div>
+                        </div>
+                        <div class="reel" id="reel2">
+                            <div class="symbol">🍒</div>
+                            <div class="symbol">🍋</div>
+                            <div class="symbol">🍊</div>
+                            <div class="symbol">🍇</div>
+                            <div class="symbol">🔔</div>
+                            <div class="symbol">⭐</div>
+                            <div class="symbol">🍒</div>
+                            <div class="symbol">🍋</div>
+                            <div class="symbol">🍊</div>
+                        </div>
+                        <div class="reel" id="reel3">
+                            <div class="symbol">🍒</div>
+                            <div class="symbol">🍋</div>
+                            <div class="symbol">🍊</div>
+                            <div class="symbol">🍇</div>
+                            <div class="symbol">🔔</div>
+                            <div class="symbol">⭐</div>
+                            <div class="symbol">🍒</div>
+                            <div class="symbol">🍋</div>
+                            <div class="symbol">🍊</div>
+                        </div>
+                    </div>
+
+                    <div class="payline"></div>
+                </div>
+
+                <div class="controls">
+                    <div class="bet-controls">
+                        <div class="quick-bet-section">
+                            <label>Schnell-Einsatz:</label>
+                            <div class="quick-bet-buttons">
+                                <button class="quick-bet-btn" data-bet="1">€1</button>
+                                <button class="quick-bet-btn" data-bet="5">€5</button>
+                                <button class="quick-bet-btn" data-bet="10">€10</button>
+                                <button class="quick-bet-btn" data-bet="25">€25</button>
+                                <button class="quick-bet-btn" data-bet="50">€50</button>
+                            </div>
+                        </div>
+
+                        <div class="bet-input-section">
+                            <label>Einsatz manuell:</label>
+                            <div class="bet-input-controls">
+                                <input type="number" id="bet-amount" min="1" max="50" value="5">
+                                <button id="bet-up">+</button>
+                                <button id="bet-down">-</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="spin-buttons">
+                        <button id="spin-btn" class="spin-button">SPIN</button>
+                        <button id="auto-spin-btn" class="auto-spin-button">AUTO SPIN</button>
+                    </div>
+
+                    <div class="game-info">
+                        <div class="last-win">
+                            <span>Letzter Gewinn:</span>
+                            <span id="last-win">0</span>
+                        </div>
+                        <div class="total-wins">
+                            <span>Gesamtgewinn:</span>
+                            <span id="total-wins">0</span>
+                        </div>
+                        <div class="balance-info">
+                            <span>Guthaben:</span>
+                            <span id="balance-info">100</span>
+                        </div>
+                        <div class="account-info">
+                            <span>Konto:</span>
+                            <span id="account-balance">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="paytable">
+                    <h3>Gewinntabelle</h3>
+                    <div class="paytable-content">
+                        <div class="payline-item">
+                            <span>🍒🍒🍒</span>
+                            <span>10x</span>
+                        </div>
+                        <div class="payline-item">
+                            <span>🍋🍋🍋</span>
+                            <span>15x</span>
+                        </div>
+                        <div class="payline-item">
+                            <span>🍊🍊🍊</span>
+                            <span>20x</span>
+                        </div>
+                        <div class="payline-item">
+                            <span>🍇🍇🍇</span>
+                            <span>25x</span>
+                        </div>
+                        <div class="payline-item">
+                            <span>🔔🔔🔔</span>
+                            <span>50x</span>
+                        </div>
+                        <div class="payline-item">
+                            <span>⭐⭐⭐</span>
+                            <span>100x</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="daily" class="tab-content">
+            <div class="daily-bonus">
+                <h2>🎁 Bonus System</h2>
+                <div class="bonus-info">
+                    <div class="bonus-history">
+                        <h3>Verfügbare Boni</h3>
+                        <div id="available-bonuses"></div>
+
+                        <h3>Bonus Historie</h3>
+                        <div id="bonus-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="level" class="tab-content">
+            <div class="level-panel">
+                <h2>🏆 Level System</h2>
+                <div class="level-info">
+                    <div class="level-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Aktuelles Level:</span>
+                            <span class="stat-value" id="level-display">1</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Gesamt XP:</span>
+                            <span class="stat-value" id="total-xp-display">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Spins gespielt:</span>
+                            <span class="stat-value" id="total-spins-display">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Gewonnene XP:</span>
+                            <span class="stat-value" id="won-xp-display">0</span>
+                        </div>
+                    </div>
+
+                    <div class="level-rewards">
+                        <h3>🎁 Level Belohnungen</h3>
+                        <div class="rewards-list" id="rewards-list">
+                            <div class="reward-item">
+                                <span class="reward-level">Level 5:</span>
+                                <span class="reward-text">+ 50€ Bonus</span>
+                            </div>
+                            <div class="reward-item">
+                                <span class="reward-level">Level 10:</span>
+                                <span class="reward-text">+ 100€ Bonus</span>
+                            </div>
+                            <div class="reward-item">
+                                <span class="reward-level">Level 20:</span>
+                                <span class="reward-text">+ 250€ Bonus</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings" class="tab-content">
+            <div class="settings-panel">
+                <h2>⚙️ Settings</h2>
+                <div class="backup-section">
+                    <h3>Backup & Restore</h3>
+                    <p>Speichern Sie Ihre Spielstände und stellen Sie sie wieder her.</p>
+                    <div class="backup-controls">
+                        <button id="download-backup" class="backup-button">📥 Download Backup</button>
+                        <button id="upload-backup" class="backup-button">📤 Upload Backup</button>
+                        <input type="file" id="backup-file" accept=".json" style="display: none;">
+                    </div>
+                    <div class="storage-info">
+                        <h4>Local Storage Status</h4>
+                        <div id="storage-status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
