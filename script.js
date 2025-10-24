@@ -302,9 +302,10 @@ class SlotMachine {
     
     getVisibleSymbols() {
         const symbols = [];
-        this.reels.forEach(reel => {
-            const middleSymbol = reel.querySelectorAll('.symbol')[4];
-            symbols.push(middleSymbol.textContent);
+        this.reels.forEach((reel, index) => {
+            const allSymbols = reel.querySelectorAll('.symbol');
+            const middleSymbol = allSymbols[1];
+            symbols.push(middleSymbol ? middleSymbol.textContent : '');
         });
         return symbols;
     }
@@ -445,24 +446,24 @@ class SlotMachine {
         
         if (this.currentTransferType === 'withdraw') {
             if (amount > this.balance || amount <= 0) {
-                this.showNotification('❌ Ungültiger Auszahlungsbetrag!', 'error');
+                this.showNotification('Ungültiger Auszahlungsbetrag!', 'error');
                 return;
             }
             
             this.balance -= amount;
             this.accountBalance += amount;
             
-            this.showNotification(`✅ €${amount} erfolgreich auf Ihr Konto überwiesen!`, 'success');
+            this.showNotification(`€${amount} erfolgreich auf Ihr Konto überwiesen!`, 'success');
         } else if (this.currentTransferType === 'deposit') {
             if (amount > this.accountBalance || amount <= 0) {
-                this.showNotification('❌ Ungültiger Einzahlungsbetrag!', 'error');
+                this.showNotification('Ungültiger Einzahlungsbetrag!', 'error');
                 return;
             }
             
             this.accountBalance -= amount;
             this.balance += amount;
             
-            this.showNotification(`✅ €${amount} erfolgreich auf Ihr Guthaben eingezahlt!`, 'success');
+            this.showNotification(`€${amount} erfolgreich auf Ihr Guthaben eingezahlt!`, 'success');
         }
         
         this.updateDisplay();
