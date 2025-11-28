@@ -43,7 +43,7 @@ class SlotMachine {
         this.totalSpins = 0;
         this.wonXP = 0;
         
-        // Symbol-Multiplier für Gewinne
+        // Symbol multipliers for wins
         this.symbolMultipliers = {
             '🍒': 10,
             '🍋': 15,
@@ -121,7 +121,7 @@ class SlotMachine {
         this.totalSpinsDisplayElement = document.getElementById('total-spins-display');
         this.wonXPDisplayElement = document.getElementById('won-xp-display');
         
-        console.log('Level Elements initialisiert:', {
+        console.log('Level Elements initialized:', {
             playerLevelElement: !!this.playerLevelElement,
             currentXPElement: !!this.currentXPElement,
             nextLevelXPElement: !!this.nextLevelXPElement,
@@ -219,10 +219,10 @@ class SlotMachine {
             
             // Show notification if amount was limited
             if (amount > maxBet) {
-                this.showNotification(`Einsatz auf €${finalAmount} begrenzt (max. verfügbar)`, 'info');
+                this.showNotification(`Bet limited to $${finalAmount} (max available)`, 'info');
             }
         } else {
-            this.showNotification('Nicht genug Guthaben für diesen Einsatz!', 'error');
+            this.showNotification('Not enough balance for this bet!', 'error');
         }
     }
     
@@ -320,7 +320,7 @@ class SlotMachine {
             this.balance += winAmount;
             this.lastWin = winAmount;
             this.totalWins += winAmount;
-            this.addXP(winAmount, 'win'); // 1 XP pro gewonnenem Euro
+            this.addXP(winAmount, 'win'); // 1 XP per dollar won
             this.showWinMessage(winAmount);
             
             // Track consecutive wins
@@ -362,7 +362,7 @@ class SlotMachine {
     }
     
     showWinMessage(winAmount) {
-        this.showNotification(`Du hast ${this.formatNumber(winAmount)}€ gewonnen!`, 'success');
+        this.showNotification(`You won $${this.formatNumber(winAmount)}!`, 'success');
     }
     
     toggleAutoSpin() {
@@ -424,17 +424,17 @@ class SlotMachine {
         this.currentTransferType = type;
         
         if (type === 'withdraw') {
-            this.popupTitle.textContent = 'Guthaben auszahlen';
-            this.transferDescription.textContent = 'Wählen Sie den Betrag, den Sie auf Ihr Konto auszahlen möchten:';
-            this.availableBalanceLabel.textContent = 'Verfügbares Guthaben: €';
-            this.accountBalanceLabel.textContent = 'Kontostand: €';
+            this.popupTitle.textContent = 'Withdraw Balance';
+            this.transferDescription.textContent = 'Select the amount you want to withdraw to your account:';
+            this.availableBalanceLabel.textContent = 'Available Balance: $';
+            this.accountBalanceLabel.textContent = 'Account Balance: $';
             this.availableBalanceDisplay.textContent = this.balance;
             this.accountBalanceDisplay.textContent = this.accountBalance;
         } else if (type === 'deposit') {
-            this.popupTitle.textContent = 'Guthaben einzahlen';
-            this.transferDescription.textContent = 'Wählen Sie den Betrag, den Sie von Ihrem Konto einzahlen möchten:';
-            this.availableBalanceLabel.textContent = 'Verfügbares Guthaben: €';
-            this.accountBalanceLabel.textContent = 'Automat: €';
+            this.popupTitle.textContent = 'Deposit Balance';
+            this.transferDescription.textContent = 'Select the amount you want to deposit from your account:';
+            this.availableBalanceLabel.textContent = 'Available Balance: $';
+            this.accountBalanceLabel.textContent = 'Machine: $';
             this.availableBalanceDisplay.textContent = this.accountBalance;
             this.accountBalanceDisplay.textContent = this.balance;
         }
@@ -474,7 +474,7 @@ class SlotMachine {
         const canTransfer = amount > 0 && amount <= maxAmount && amount <= 1000;
         
         this.confirmTransferBtn.disabled = !canTransfer;
-        this.confirmTransferBtn.textContent = canTransfer ? 'Bestätigen' : 'Ungültiger Betrag';
+        this.confirmTransferBtn.textContent = canTransfer ? 'Confirm' : 'Invalid Amount';
     }
     
     confirmTransfer() {
@@ -482,24 +482,24 @@ class SlotMachine {
         
         if (this.currentTransferType === 'withdraw') {
             if (amount > this.balance || amount <= 0) {
-                this.showNotification('Ungültiger Auszahlungsbetrag!', 'error');
+                this.showNotification('Invalid withdrawal amount!', 'error');
                 return;
             }
             
             this.balance -= amount;
             this.accountBalance += amount;
             
-            this.showNotification(`€${amount} erfolgreich auf Ihr Konto überwiesen!`, 'success');
+            this.showNotification(`$${amount} successfully transferred to your account!`, 'success');
         } else if (this.currentTransferType === 'deposit') {
             if (amount > this.accountBalance || amount <= 0) {
-                this.showNotification('Ungültiger Einzahlungsbetrag!', 'error');
+                this.showNotification('Invalid deposit amount!', 'error');
                 return;
             }
             
             this.accountBalance -= amount;
             this.balance += amount;
             
-            this.showNotification(`€${amount} erfolgreich auf Ihr Guthaben eingezahlt!`, 'success');
+            this.showNotification(`$${amount} successfully deposited to your balance!`, 'success');
         }
         
         this.updateDisplay();
@@ -622,8 +622,8 @@ class SlotMachine {
             this.wonXP += amount;
         }
         
-        console.log(`XP hinzugefügt: ${amount} (${source}), Total XP: ${this.totalXP}, Level: ${this.playerLevel}`);
-        console.log(`Elements existieren: playerLevelElement=${!!this.playerLevelElement}, currentXPElement=${!!this.currentXPElement}, xpProgressElement=${!!this.xpProgressElement}`);
+        console.log(`XP added: ${amount} (${source}), Total XP: ${this.totalXP}, Level: ${this.playerLevel}`);
+        console.log(`Elements exist: playerLevelElement=${!!this.playerLevelElement}, currentXPElement=${!!this.currentXPElement}, xpProgressElement=${!!this.xpProgressElement}`);
         
         this.checkLevelUp();
         this.updateLevelDisplay();
@@ -635,7 +635,7 @@ class SlotMachine {
         
         if (this.totalXP >= xpNeededForNextLevel) {
             this.playerLevel++;
-            this.showNotification(`Level Up! Jetzt Level ${this.playerLevel}!`, 'success');
+            this.showNotification(`Level Up! Now Level ${this.playerLevel}!`, 'success');
             this.checkLevelRewards();
         }
     }
@@ -713,7 +713,7 @@ class SlotMachine {
         this.saveToStorage();
         
         // Show success message
-        this.showNotification('100€ Bonus auf Ihr Konto überwiesen!', 'success');
+        this.showNotification('$100 bonus transferred to your account!', 'success');
     }
     
     
@@ -737,13 +737,13 @@ class SlotMachine {
         this.saveToStorage();
         
         // Show success message
-        this.showNotification('50€ Bonus auf Ihr Konto überwiesen!', 'success');
+        this.showNotification('$50 bonus transferred to your account!', 'success');
     }
     
     updateBonusHistory() {
         this.bonusList.innerHTML = '';
         if (this.bonusHistory.length === 0) {
-            this.bonusList.innerHTML = '<div class="bonus-item">Keine Bonus-Historie verfügbar</div>';
+            this.bonusList.innerHTML = '<div class="bonus-item">No bonus history available</div>';
         } else {
             this.bonusHistory.forEach(bonus => {
                 const bonusItem = document.createElement('div');
@@ -754,7 +754,7 @@ class SlotMachine {
                 
                 bonusItem.innerHTML = `
                     <div class="bonus-info">
-                        <div class="bonus-amount">€${this.formatNumber(bonus.amount)}</div>
+                        <div class="bonus-amount">$${this.formatNumber(bonus.amount)}</div>
                         <div class="bonus-date">${bonus.date}</div>
                     </div>
                     <div class="bonus-type ${typeClass}">${typeLabel}</div>
@@ -784,13 +784,13 @@ class SlotMachine {
         this.dailyBonusElement.innerHTML = `
             <div class="bonus-details">
                 <div class="bonus-title">🎁 Daily Bonus</div>
-                <div class="bonus-description">Holen Sie sich jeden Tag 100€ Bonus!</div>
+                <div class="bonus-description">Get $100 bonus every day!</div>
                 <div class="bonus-timer" id="daily-timer">00:00:00</div>
             </div>
             <div class="bonus-actions">
-                <div class="bonus-amount-large">€100</div>
+                <div class="bonus-amount-large">$100</div>
                 <button class="claim-button-list" id="daily-claim-btn" onclick="slotMachine.claimBonus()">
-                    Warten...
+                    Wait...
                 </button>
             </div>
         `;
@@ -802,14 +802,14 @@ class SlotMachine {
         this.hourlyBonusElement.className = 'available-bonus-item';
         this.hourlyBonusElement.innerHTML = `
             <div class="bonus-details">
-                <div class="bonus-title">⏰ 60-Minuten Bonus</div>
-                <div class="bonus-description">Holen Sie sich alle 60 Minuten 50€ Bonus!</div>
+                <div class="bonus-title">⏰ 60-Minute Bonus</div>
+                <div class="bonus-description">Get $50 bonus every 60 minutes!</div>
                 <div class="bonus-timer" id="hourly-timer">00:00:00</div>
             </div>
             <div class="bonus-actions">
-                <div class="bonus-amount-large">€50</div>
+                <div class="bonus-amount-large">$50</div>
                 <button class="claim-button-list" id="hourly-claim-btn" onclick="slotMachine.claimHourlyBonus()">
-                    Warten...
+                    Wait...
                 </button>
             </div>
         `;
@@ -832,9 +832,9 @@ class SlotMachine {
         const timeUntilNextDaily = (24 * 60 * 60 * 1000) - timeSinceLastDaily;
         const dailyReady = timeUntilNextDaily <= 0;
         
-        this.dailyTimer.textContent = dailyReady ? 'Bereit!' : this.formatTime(timeUntilNextDaily);
+        this.dailyTimer.textContent = dailyReady ? 'Ready!' : this.formatTime(timeUntilNextDaily);
         this.dailyClaimBtn.disabled = !dailyReady;
-        this.dailyClaimBtn.textContent = dailyReady ? 'Abholen' : 'Warten...';
+        this.dailyClaimBtn.textContent = dailyReady ? 'Claim' : 'Wait...';
         this.dailyBonusElement.className = `available-bonus-item ${dailyReady ? 'ready' : ''}`;
         
         // Hourly Bonus
@@ -843,9 +843,9 @@ class SlotMachine {
         const timeUntilNextHourly = (60 * 60 * 1000) - timeSinceLastHourly;
         const hourlyReady = timeUntilNextHourly <= 0;
         
-        this.hourlyTimer.textContent = hourlyReady ? 'Bereit!' : this.formatTime(timeUntilNextHourly);
+        this.hourlyTimer.textContent = hourlyReady ? 'Ready!' : this.formatTime(timeUntilNextHourly);
         this.hourlyClaimBtn.disabled = !hourlyReady;
-        this.hourlyClaimBtn.textContent = hourlyReady ? 'Abholen' : 'Warten...';
+        this.hourlyClaimBtn.textContent = hourlyReady ? 'Claim' : 'Wait...';
         this.hourlyBonusElement.className = `available-bonus-item ${hourlyReady ? 'ready' : ''}`;
     }
     
@@ -878,9 +878,9 @@ class SlotMachine {
         const lastSave = data ? new Date(JSON.parse(data).timestamp).toLocaleString() : 'Nie';
         
         this.storageStatus.innerHTML = `
-            <div>Speichergröße: ${size} bytes</div>
-            <div>Letzter Speichervorgang: ${lastSave}</div>
-            <div>Daten vorhanden: ${data ? 'Ja' : 'Nein'}</div>
+            <div>Storage Size: ${size} bytes</div>
+            <div>Last Save: ${lastSave}</div>
+            <div>Data Available: ${data ? 'Yes' : 'No'}</div>
         `;
     }
     
@@ -916,7 +916,7 @@ class SlotMachine {
         
         URL.revokeObjectURL(url);
         
-        this.showNotification('Backup erfolgreich heruntergeladen!', 'success');
+        this.showNotification('Backup successfully downloaded!', 'success');
     }
     
     uploadBackup(event) {
@@ -961,12 +961,12 @@ class SlotMachine {
                     this.updateStorageStatus();
                     this.saveToStorage();
                     
-                    this.showNotification('✅ Backup erfolgreich wiederhergestellt!', 'success');
+                    this.showNotification('✅ Backup successfully restored!', 'success');
                 } else {
-                    this.showNotification('❌ Ungültige Backup-Datei!', 'error');
+                    this.showNotification('❌ Invalid backup file!', 'error');
                 }
             } catch (error) {
-                this.showNotification('❌ Fehler beim Laden der Backup-Datei!', 'error');
+                this.showNotification('❌ Error loading backup file!', 'error');
             }
         };
         reader.readAsText(file);
@@ -975,13 +975,13 @@ class SlotMachine {
     resetGame() {
         // Show confirmation dialog
         const confirmed = confirm(
-            '⚠️ WARNUNG: Dies wird ALLE Ihre Spielstände zurücksetzen!\n\n' +
-            '• Guthaben: 100€ (Standard)\n' +
-            '• Konto: 0€\n' +
+            '⚠️ WARNING: This will reset ALL your game progress!\n\n' +
+            '• Balance: $100 (Default)\n' +
+            '• Account: $0\n' +
             '• Level: 1\n' +
-            '• Alle Erfolge: Gesperrt\n' +
-            '• Alle Statistiken: Zurückgesetzt\n\n' +
-            'Möchten Sie wirklich fortfahren?'
+            '• All Achievements: Locked\n' +
+            '• All Statistics: Reset\n\n' +
+            'Do you really want to continue?'
         );
         
         if (confirmed) {
@@ -1042,7 +1042,7 @@ class SlotMachine {
             this.updateStorageStatus();
             this.saveToStorage();
             
-            this.showNotification('🔄 Spiel erfolgreich zurückgesetzt!', 'success');
+            this.showNotification('🔄 Game successfully reset!', 'success');
         }
     }
     
@@ -1128,7 +1128,7 @@ class SlotMachine {
             const reward = this.achievements[achievementId].reward;
             this.accountBalance += reward;
             
-            this.showNotification(`🏆 Erfolg freigeschaltet! +${reward}€ Bonus!`, 'success');
+            this.showNotification(`🏆 Achievement unlocked! +$${reward} bonus!`, 'success');
             this.updateAchievementsDisplay();
             this.updateDisplay();
             this.saveToStorage();
