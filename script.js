@@ -200,7 +200,7 @@ class SlotMachine {
     
     updateBetAmount() {
         const newBet = parseInt(this.betAmountInput.value);
-        if (newBet >= 1 && newBet <= 50 && newBet <= this.balance) {
+        if (newBet >= 1 && newBet <= 1000 && newBet <= this.balance) {
             this.betAmount = newBet;
         } else {
             this.betAmountInput.value = this.betAmount;
@@ -209,7 +209,7 @@ class SlotMachine {
     
     setQuickBet(amount) {
         // Limit to available balance and max bet
-        const maxBet = Math.min(50, this.balance);
+        const maxBet = Math.min(1000, this.balance);
         const finalAmount = Math.min(amount, maxBet);
         
         if (finalAmount >= 1) {
@@ -227,8 +227,8 @@ class SlotMachine {
     }
     
     increaseBet() {
-        if (this.betAmount < 50 && this.betAmount < this.balance) {
-            this.betAmount = Math.min(this.betAmount + 1, 50, this.balance);
+        if (this.betAmount < 1000 && this.betAmount < this.balance) {
+            this.betAmount = Math.min(this.betAmount + 1, 1000, this.balance);
             this.betAmountInput.value = this.betAmount;
         }
     }
@@ -404,7 +404,7 @@ class SlotMachine {
         this.saveToStorage();
         
         // Update bet input max value
-        this.betAmountInput.max = Math.min(50, this.balance);
+        this.betAmountInput.max = Math.min(1000, this.balance);
         
         // Disable spin button if not enough balance
         if (this.balance < this.betAmount) {
@@ -642,9 +642,9 @@ class SlotMachine {
     
     getXPForLevel(level) {
         // XP needed to REACH this level (cumulative)
-        // Level 1: 0 XP, Level 2: 100 XP, Level 3: 282 XP, etc.
+        // Level 1: 0 XP, Level 2: 2000 XP, Level 3: 8000 XP, etc.
         if (level <= 1) return 0;
-        return Math.floor(100 * Math.pow(level - 1, 1.5));
+        return Math.floor(2000 * Math.pow(level - 1, 2.0));
     }
     
     checkLevelRewards() {
